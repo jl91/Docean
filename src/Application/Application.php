@@ -1,21 +1,22 @@
 <?php
 
 
-namespace Docean;
+namespace Docean\Application;
 
 use Docean\Cofiguration\Configuration;
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
-class Application
+class Application extends ConsoleApplication
 {
-    private $console = null;
     private $commands = null;
 
-    public function __construct($name = 'Docean App', Configuration $configuration = null)
+    public function __construct(Configuration $configuration = null)
     {
-        $version = $this->getVersion();
-        $this->console = new ConsoleApplication($name, $version);
+        $version = $this->getLastTag();
+        parent::__construct('Docean App', $version);
         $this->commands = $this->getCommands($configuration);
     }
 
@@ -37,18 +38,18 @@ class Application
         return $collection;
     }
 
-    private function getVersion()
+    public function getLastTag()
     {
-        $versions = trim(shell_exec('git tag'));
-        $pieces = explode(PHP_EOL, $versions);
-        $version = end($pieces);
-        return $version;
+        $tags = trim(shell_exec('git tag'));
+        $pieces = explode(PHP_EOL, $tags);
+        $tag = end($pieces);
+        return $tag;
     }
 
-    public function run($commands)
+    public function run(InputInterface $input = null, OutputInterface $output = null)
     {
-        $this->console->addCommands($this->commands);
-        return $this->console->run($input, $output);
+        $this->addCommands($this->commands);
+        return parent::run($input, $output);
     }
 
 }

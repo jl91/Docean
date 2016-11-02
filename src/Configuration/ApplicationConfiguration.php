@@ -94,12 +94,13 @@ class ApplicationConfiguration implements ConfigurationInterface
             !$value instanceof Configuration &&
             !$value instanceof \stdClass
         ) {
-            $message = "Invalid type of object, Configurations should be ";
+            $message = "Invalid type of object, Configurations should be an ";
             $message .= "object of type \\stdClass or Docean\\Configuration\\ConfigurationInterface ";
             $message .= "Object of type %s passed as argument ";
             throw new \InvalidArgumentException(sprintf($message), get_class($value));
         }
 
+        $this->rewind();
         $this->configuration[$offset] = $value;
         return $this;
     }
