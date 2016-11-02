@@ -44,29 +44,30 @@ class ApplicationConfiguration implements ConfigurationInterface
 
     public function current() : Configuration
     {
-        $this->configuration[$this->key];
+        $this->configuration[$this->keys[$this->key]];
         return $this;
     }
 
     public function next() : Configuration
     {
-        $this->key = array_shift($this->keys);
+        $this->key++;
+        return $this;
     }
 
     public function key() : int
     {
-        return $this->key;
+        return $this->keys[$this->key];
     }
 
     public function valid() : bool
     {
-        return $this->offsetExists($this->key);
+        return $this->offsetExists($this->keys[$this->key]);
     }
 
     public function rewind() : Configuration
     {
         $this->keys = array_keys($this->configuration);
-        $this->key = array_shift($this->keys);
+        $this->key = 0;
         return $this;
     }
 
