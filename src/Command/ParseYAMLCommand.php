@@ -44,6 +44,8 @@ class ParseYAMLCommand extends Command
             file_put_contents(sprintf($exportPath, $app['containerName']), $yaml);
             $counter++;
         }
+        $message = "$counter Files Parsed";
+        $output->writeln(sprintf(SUCCESS_TEMPLATE, $message));
 
         return $output;
     }
