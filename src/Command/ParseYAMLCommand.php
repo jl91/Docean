@@ -38,8 +38,9 @@ class ParseYAMLCommand extends Command
 
         foreach ($this->apps as $app) {
 
-            $yaml = YamlParser::dump($app['yaml'], 6);
-            $yaml = preg_replace('/\'[0-9]{1,3}\'\: /', '/- /', $yaml);
+            $yaml = YamlParser::dump([
+                $app['serviceName'] => $app['yaml']
+            ],YamlParser::DUMP_OBJECT_AS_MAP);
             file_put_contents(sprintf($exportPath, $app['containerName']), $yaml);
             $counter++;
         }
