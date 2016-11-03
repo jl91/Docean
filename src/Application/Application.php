@@ -10,7 +10,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Application extends ConsoleApplication
 {
-    private $commands = null;
 
     const COMMANDS = 'commands';
 
@@ -18,7 +17,8 @@ class Application extends ConsoleApplication
     {
         $version = $this->getLastTag();
         parent::__construct('Docean App', $version);
-        $this->commands = $this->getCommands($configuration);
+        $commands = $this->getCommands($configuration);
+        $this->addCommands($commands);
     }
 
     private function getCommands(ConfigurationInterface $configuration = null) : array
@@ -45,12 +45,6 @@ class Application extends ConsoleApplication
         $pieces = explode(PHP_EOL, $tags);
         $tag = end($pieces);
         return $tag;
-    }
-
-    public function run(InputInterface $input = null, OutputInterface $output = null)
-    {
-        $this->addCommands($this->commands);
-        return parent::run($input, $output);
     }
 
 }
