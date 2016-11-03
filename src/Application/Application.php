@@ -3,9 +3,8 @@
 
 namespace Docean\Application;
 
-use Docean\Cofiguration\Configuration;
+use Docean\Cofiguration\ConfigurationInterface;
 use Symfony\Component\Console\Application as ConsoleApplication;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -13,25 +12,27 @@ class Application extends ConsoleApplication
 {
     private $commands = null;
 
-    public function __construct(Configuration $configuration = null)
+    const COMMANDS = 'commands';
+
+    public function __construct(ConfigurationInterface $configuration = null)
     {
         $version = $this->getLastTag();
         parent::__construct('Docean App', $version);
         $this->commands = $this->getCommands($configuration);
     }
 
-    private function getCommands(Configuration $configuration = null) : array
+    private function getCommands(ConfigurationInterface $configuration = null) : array
     {
-        $commands = isset($configuration['commands']) ? $configuration['commands'] : null;
-
-        if (empty($commands)) {
-            return [];
-        }
+        $commands = !empty($configuration[self::COMMANDS]) ? $configuration[self::COMMANDS] : null;
 
         $collection = [];
 
-        foreach ($commands as $name => $value) {
-            $command = new Command($name);
+        if (empty($commands)) {
+            return $collection;
+        }
+
+        foreach ($commands->toArray()['commands'] as $name => $value) {
+            $command = new $value($name);
             $collection[] = $command;
         }
 

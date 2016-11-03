@@ -1,23 +1,27 @@
 <?php
-
 namespace Docean\Cofiguration;
 
 
 class ApplicationConfiguration implements ConfigurationInterface
 {
     private $configuration = null;
-    private $key = null;
+    private $key = 0;
     private $keys = null;
 
-    public function set(string $name, $value) : Configuration
+    public function __construct()
+    {
+        $this->rewind();
+    }
+
+    public function set(string $name, $value) : ConfigurationInterface
     {
         $this->offsetSet($name, $value);
         return $this;
     }
 
-    public function get(string $name) : Configuration
+    public function get(string $name) : ConfigurationInterface
     {
-        return $this->offsetGet($name);;
+        return $this->offsetGet($name);
     }
 
     public function toArray() : array
@@ -30,7 +34,7 @@ class ApplicationConfiguration implements ConfigurationInterface
 
         foreach ($this->configuration as $name => $value) {
 
-            if ($value instanceof Configuration) {
+            if ($value instanceof ConfigurationInterface) {
                 $configuration[$name] = $value->toArray();
             } elseif ($value instanceof \stdClass) {
                 $configuration[$name] = (array)$value;
@@ -42,31 +46,31 @@ class ApplicationConfiguration implements ConfigurationInterface
         return $configuration;
     }
 
-    public function current() : Configuration
+    public function current() : ConfigurationInterface
     {
         $this->configuration[$this->keys[$this->key]];
         return $this;
     }
 
-    public function next() : Configuration
+    public function next() : ConfigurationInterface
     {
         $this->key++;
         return $this;
     }
 
-    public function key() : int
+    public function key()
     {
         return $this->keys[$this->key];
     }
 
     public function valid() : bool
     {
-        return $this->offsetExists($this->keys[$this->key]);
+        $offset = $this->keys[$this->key];
+        return $this->offsetExists($offset);
     }
 
-    public function rewind() : Configuration
+    public function rewind() : ConfigurationInterface
     {
-        $this->keys = array_keys($this->configuration);
         $this->key = 0;
         return $this;
     }
@@ -76,7 +80,7 @@ class ApplicationConfiguration implements ConfigurationInterface
         return (bool)isset($this->configuration[$offset]);
     }
 
-    public function offsetGet($offset) : Configuration
+    public function offsetGet($offset) : ConfigurationInterface
     {
         if (!$this->offsetExists($offset)) {
             throw new \OutOfBoundsException("Configuration {$offset} does not exists");
@@ -87,25 +91,25 @@ class ApplicationConfiguration implements ConfigurationInterface
         return $configuration;
     }
 
-    public function offsetSet($offset, $value) :  Configuration
+    public function offsetSet($offset, $value) :  ConfigurationInterface
     {
         if (
             is_object($value) &&
-            !$value instanceof Configuration &&
+            !$value instanceof ConfigurationInterface &&
             !$value instanceof \stdClass
         ) {
             $message = "Invalid type of object, Configurations should be an ";
             $message .= "object of type \\stdClass or Docean\\Configuration\\ConfigurationInterface ";
-            $message .= "Object of type %s passed as argument ";
+            $message .= "object of type %s passed as argument ";
             throw new \InvalidArgumentException(sprintf($message), get_class($value));
         }
 
-        $this->rewind();
         $this->configuration[$offset] = $value;
+        $this->rewind();
         return $this;
     }
 
-    public function offsetUnset($offset) : Configuration
+    public function offsetUnset($offset) : ConfigurationInterface
     {
         if (!$this->offsetExists($offset)) {
             throw new \OutOfBoundsException("Configuration {$offset} does not exists");
@@ -119,6 +123,5 @@ class ApplicationConfiguration implements ConfigurationInterface
     {
         return $this->count($this->configuration);
     }
-
 
 }
