@@ -12,7 +12,11 @@ return [
             'a' => 'a',
             'b' => [
                 'a.b' => 'a.b',
-                '-'=>'aa'
+                'volumes' => [
+                    'aa:bb',
+                    'aa:bb',
+                    'aa:bb',
+                ]
             ]
         ],
     ]
