@@ -3,7 +3,7 @@
 
 namespace Docean\Application;
 
-use Docean\Cofiguration\ConfigurationInterface;
+use Docean\Configuration\ConfigurationInterface;
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
